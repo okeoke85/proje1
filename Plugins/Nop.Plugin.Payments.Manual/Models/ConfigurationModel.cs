@@ -8,6 +8,9 @@ namespace Nop.Plugin.Payments.Manual.Models
     {
         public int ActiveStoreScopeConfiguration { get; set; }
 
+        [NopResourceDisplayName("Plugins.Payments.Manual.Fields.PaymentHostUrl")]
+        public string PaymentHostUrl { get; set; }
+
         [NopResourceDisplayName("Plugins.Payments.Manual.Fields.AdditionalFeePercentage")]
         public bool AdditionalFeePercentage { get; set; }
         public bool AdditionalFeePercentage_OverrideForStore { get; set; }

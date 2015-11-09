@@ -42,6 +42,7 @@ namespace Nop.Plugin.Payments.Manual.Controllers
 
             var model = new ConfigurationModel();
             model.TransactModeId = Convert.ToInt32(manualPaymentSettings.TransactMode);
+            model.PaymentHostUrl = manualPaymentSettings.PaymentHostUrl.ToString();
             model.AdditionalFee = manualPaymentSettings.AdditionalFee;
             model.AdditionalFeePercentage = manualPaymentSettings.AdditionalFeePercentage;
             model.TransactModeValues = manualPaymentSettings.TransactMode.ToSelectList();

@@ -13,5 +13,9 @@ namespace Nop.Plugin.Payments.Manual
         /// Additional fee
         /// </summary>
         public decimal AdditionalFee { get; set; }
+        /// <summary>
+        /// PaymentHostUrl
+        /// </summary>
+        public string PaymentHostUrl { get; set; }
     }
 }

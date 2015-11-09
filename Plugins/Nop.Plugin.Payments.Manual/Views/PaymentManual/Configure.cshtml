@@ -38,6 +38,15 @@
             </td>
         </tr>
         <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.PaymentHostUrl):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.PaymentHostUrl)
+                @Html.ValidationMessageFor(model => model.PaymentHostUrl)
+            </td>
+        </tr>
+        <tr>
             <td colspan="2">
                 <input type="submit" name="save" class="k-button" value="@T("Admin.Common.Save")" />
             </td>
