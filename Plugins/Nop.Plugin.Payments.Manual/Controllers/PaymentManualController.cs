@@ -43,6 +43,9 @@ namespace Nop.Plugin.Payments.Manual.Controllers
             var model = new ConfigurationModel();
             model.TransactModeId = Convert.ToInt32(manualPaymentSettings.TransactMode);
             model.PaymentHostUrl = manualPaymentSettings.PaymentHostUrl.ToString();
+            model.MerchantID = String.IsNullOrEmpty(manualPaymentSettings.MerchantID) ? "" : manualPaymentSettings.MerchantID.ToString();
+            model.MerchantTerminalID = String.IsNullOrEmpty(manualPaymentSettings.MerchantTerminalID) ? "" : manualPaymentSettings.MerchantTerminalID.ToString();
+           
             model.AdditionalFee = manualPaymentSettings.AdditionalFee;
             model.AdditionalFeePercentage = manualPaymentSettings.AdditionalFeePercentage;
             model.TransactModeValues = manualPaymentSettings.TransactMode.ToSelectList();
@@ -74,6 +77,9 @@ namespace Nop.Plugin.Payments.Manual.Controllers
             manualPaymentSettings.TransactMode = (TransactMode)model.TransactModeId;
             manualPaymentSettings.AdditionalFee = model.AdditionalFee;
             manualPaymentSettings.AdditionalFeePercentage = model.AdditionalFeePercentage;
+            manualPaymentSettings.PaymentHostUrl = model.PaymentHostUrl;
+            manualPaymentSettings.MerchantID = model.MerchantID;
+            manualPaymentSettings.MerchantTerminalID = model.MerchantTerminalID;
 
             /* We do not clear cache after each setting update.
              * This behavior can increase performance because cached settings will not be cleared 
@@ -83,6 +89,10 @@ namespace Nop.Plugin.Payments.Manual.Controllers
                 _settingService.SaveSetting(manualPaymentSettings, x => x.TransactMode, storeScope, false);
             else if (storeScope > 0)
                 _settingService.DeleteSetting(manualPaymentSettings, x => x.TransactMode, storeScope);
+
+            _settingService.SaveSetting(manualPaymentSettings, x => x.PaymentHostUrl, storeScope, false);
+            _settingService.SaveSetting(manualPaymentSettings, x => x.MerchantID, storeScope, false);
+            _settingService.SaveSetting(manualPaymentSettings, x => x.MerchantTerminalID, storeScope, false);
 
             if (model.AdditionalFee_OverrideForStore || storeScope == 0)
                 _settingService.SaveSetting(manualPaymentSettings, x => x.AdditionalFee, storeScope, false);

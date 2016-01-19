@@ -8,6 +8,12 @@ namespace Nop.Plugin.Payments.Manual.Models
     {
         public int ActiveStoreScopeConfiguration { get; set; }
 
+        [NopResourceDisplayName("Plugins.Payments.Manual.Fields.MerchantID")]
+        public string MerchantID { get; set; }
+
+        [NopResourceDisplayName("Plugins.Payments.Manual.Fields.MerchantTerminalID")]
+        public string MerchantTerminalID { get; set; }
+
         [NopResourceDisplayName("Plugins.Payments.Manual.Fields.PaymentHostUrl")]
         public string PaymentHostUrl { get; set; }
 

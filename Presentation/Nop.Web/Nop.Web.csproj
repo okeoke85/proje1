@@ -1101,6 +1101,7 @@
     <Content Include="Content\samples\product_IfYouWait_1.zip" />
     <Content Include="Content\samples\product_NightVision_1.zip" />
     <Content Include="Content\samples\product_ScienceAndFaith_1.zip" />
+    <None Include="Properties\PublishProfiles\nopWeb_publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\fineuploader\iframe.xss.response-4.2.2.js" />
     <Content Include="Scripts\fineuploader\jquery.fineuploader-4.2.2.js" />
@@ -1615,6 +1616,7 @@
     <Content Include="Themes\DefaultClean\Content\images\calendar-next.png" />
     <Content Include="Themes\DefaultClean\Content\images\calendar-prev.png" />
     <Content Include="Themes\DefaultClean\Content\images\close.png" />
+    <Content Include="Themes\DefaultClean\Content\images\comp.jpg" />
     <Content Include="Themes\DefaultClean\Content\images\compare-button.png" />
     <Content Include="Themes\DefaultClean\Content\images\details.png" />
     <Content Include="Themes\DefaultClean\Content\images\download-button.png" />

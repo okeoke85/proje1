@@ -9,6 +9,7 @@ using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
+using _PosnetDotNetModule;
 
 namespace Nop.Plugin.Payments.Manual
 {
@@ -67,7 +68,70 @@ namespace Nop.Plugin.Payments.Manual
                     }
             }
 
-            return result;
+          
+
+                    C_Posnet objYKB = new C_Posnet();
+
+                    //Test parametreleri
+                    objYKB.SetMid("6706598320");
+                    objYKB.SetTid("67011009");
+                    objYKB.SetURL("http://setmpos.ykb.com/PosnetWebService/XML");
+
+                    //test card : 4506347011448053  2002/000
+
+                    string orderBankUniqueID = ("123456" + DateTime.Now.ToString("yyyyMMddHHmmssfff")).PadLeft(24, '0');
+
+               
+                    bool return_value = objYKB.DoSaleTran( processPaymentRequest.CreditCardNumber,
+                                             processPaymentRequest.CreditCardExpireYear.ToString() + processPaymentRequest.CreditCardExpireMonth.ToString(),
+                                             processPaymentRequest.CreditCardCvv2, orderBankUniqueID, String.Format("{0:0.##}", processPaymentRequest.OrderTotal),
+                                             "TL", "00", "00", "000000");
+                    bool _IsConnectionOk, _IsOperationSuccessful = false;
+                    string _ResponseErrorCode,_ResponseErrorMessage;
+                    // Baðlantý Baþarýlý
+                    if (return_value)
+                    {
+                        _IsConnectionOk = true;
+
+                        string app_code = objYKB.GetApprovedCode();
+
+                        if (app_code == "1" || app_code == "2")
+                        {
+                            _IsOperationSuccessful = true;
+                        }
+                        else if (app_code == "0")
+                        {
+                            _IsOperationSuccessful = false;
+                        }
+
+                        //test için heo  false dönsün
+                        //_IsOperationSuccessful = false;
+
+                        result.SubscriptionTransactionId  = objYKB.GetHostlogkey() + "|" + objYKB.GetAuthcode();
+                        _ResponseErrorCode = objYKB.GetResponseCode();
+                        if (_IsOperationSuccessful)
+                        {
+                            //_ResponseErrorMessage += "Banka Onay Kodu : " + _PaymentBankTransactionID;
+                        }
+                        else
+                        {
+                            _ResponseErrorMessage = objYKB.GetResponseText();
+                        }
+                    }
+
+                    // Baðlantý Baþarýsýz
+                    else
+                    {
+                        _IsOperationSuccessful = false;
+                        _ResponseErrorCode = "-100";
+                        _ResponseErrorMessage = "Banka Baðlantýsý Baþarýsýz. (BankResponseCode:" + return_value + ")";
+                    }
+                    objYKB = null;
+                
+                    //result.Success = _IsOperationSuccessful;
+                    
+
+                return result;
         }
 
         /// <summary>
@@ -242,6 +306,10 @@ namespace Nop.Plugin.Payments.Manual
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Manual.Fields.AdditionalFeePercentage.Hint", "Determines whether to apply a percentage additional fee to the order total. If not enabled, a fixed value is used.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Manual.Fields.TransactMode", "After checkout mark payment as");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Manual.Fields.TransactMode.Hint", "Specify transaction mode.");
+
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Manual.Fields.PaymentHostUrl.Hint", "Specify PaymentHostUrl.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Manual.Fields.MerchantID.Hint", "Specify MerchantID.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Manual.Fields.MerchantTerminalID.Hint", "MerchantTerminalID.");
             
 
             base.Install();
@@ -259,7 +327,12 @@ namespace Nop.Plugin.Payments.Manual
             this.DeletePluginLocaleResource("Plugins.Payments.Manual.Fields.AdditionalFeePercentage.Hint");
             this.DeletePluginLocaleResource("Plugins.Payments.Manual.Fields.TransactMode");
             this.DeletePluginLocaleResource("Plugins.Payments.Manual.Fields.TransactMode.Hint");
-            
+
+            this.DeletePluginLocaleResource("Plugins.Payments.Manual.Fields.PaymentHostUrl.Hint");
+            this.DeletePluginLocaleResource("Plugins.Payments.Manual.Fields.MerchantID.Hint");
+            this.DeletePluginLocaleResource("Plugins.Payments.Manual.Fields.MerchantTerminalID.Hint");
+
+
             base.Uninstall();
         }
 

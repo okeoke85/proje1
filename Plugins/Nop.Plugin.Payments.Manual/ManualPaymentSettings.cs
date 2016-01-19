@@ -17,5 +17,13 @@ namespace Nop.Plugin.Payments.Manual
         /// PaymentHostUrl
         /// </summary>
         public string PaymentHostUrl { get; set; }
+        /// <summary>
+        /// MerchantID
+        /// </summary>
+        public string MerchantID { get; set; }
+        /// <summary>
+        /// MerchantTerminalID
+        /// </summary>
+        public string MerchantTerminalID { get; set; }
     }
 }
