@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Nop.Admin.Models.Vendors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Nop.Core;
+using Nop.Core.Domain.Vendors;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -36,12 +38,15 @@ using Nop.Web.Framework.Security.Honeypot;
 using Nop.Web.Models.Common;
 using Nop.Web.Models.Customer;
 using WebGrease.Css.Extensions;
+using Nop.Services.Vendors;
 
 namespace Nop.Web.Controllers
 {
     public partial class CustomerController : BasePublicController
     {
         #region Fields
+        private readonly VendorSettings _vendorSettings;
+        private readonly IVendorService _vendorService;
         private readonly IAuthenticationService _authenticationService;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly DateTimeSettings _dateTimeSettings;
@@ -125,7 +130,8 @@ namespace Nop.Web.Controllers
             LocalizationSettings localizationSettings,
             CaptchaSettings captchaSettings,
             SecuritySettings securitySettings,
-            ExternalAuthenticationSettings externalAuthenticationSettings)
+            ExternalAuthenticationSettings externalAuthenticationSettings,
+            IVendorService vendorService)
         {
             this._authenticationService = authenticationService;
             this._dateTimeHelper = dateTimeHelper;
@@ -166,6 +172,7 @@ namespace Nop.Web.Controllers
             this._captchaSettings = captchaSettings;
             this._securitySettings = securitySettings;
             this._externalAuthenticationSettings = externalAuthenticationSettings;
+            this._vendorService = vendorService;
         }
 
         #endregion
@@ -1035,6 +1042,21 @@ namespace Nop.Web.Controllers
                                 var redirectUrl = Url.RouteUrl("RegisterResult", new { resultId = (int)UserRegistrationType.Standard });
                                 if (!String.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                                     redirectUrl = _webHelper.ModifyQueryString(redirectUrl, "returnurl=" + HttpUtility.UrlEncode(returnUrl), null);
+
+                                if (registrationResult.Errors.Count == 0)
+                                {
+                                    var vendor = new Vendor();
+                                    vendor.Active = true;
+                                    vendor.Email = customer.Email;
+                                    vendor.Name = customer.Username + "_V";
+                                    _vendorService.InsertVendor(vendor);
+                                    customer.VendorId = vendor.Id;
+                                    customer.CustomerRoles.Add(_customerService.GetCustomerRoleBySystemName(SystemCustomerRoleNames.Vendors));
+                                    
+                                    _customerService.UpdateCustomer(customer);
+                                }
+
+
                                 return Redirect(redirectUrl);
                             }
                         default:
@@ -1043,6 +1065,10 @@ namespace Nop.Web.Controllers
                             }
                     }
                 }
+
+
+
+
 
                 //errors
                 foreach (var error in registrationResult.Errors)
